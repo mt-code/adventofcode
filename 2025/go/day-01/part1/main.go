@@ -26,26 +26,13 @@ func main() {
 	buf := bufio.NewScanner(f)
 	for buf.Scan() {
 		ins := buf.Text()
-		isLeft := ins[0] == 'L'
-		num, err := strconv.Atoi(ins[1:])
-		if err != nil {
-			log.Fatal(err)
+		val, _ := strconv.Atoi(ins[1:])
+
+		if ins[0] == 'L' {
+			val *= -1
 		}
 
-		if isLeft {
-			current -= num
-		} else {
-			current += num
-		}
-
-		if current%MAX == MIN {
-			current = MIN
-		} else if current < MIN {
-			current = MAX + (current % MAX)
-		} else if current >= MAX {
-			current = MIN + (current % MAX)
-		}
-
+		current = (val + current) % MAX
 		if current == 0 {
 			count++
 		}
