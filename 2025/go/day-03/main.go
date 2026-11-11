@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	utils.Solve(part1)
+	utils.Solve(part1, part2)
 }
 
 func part1(scanner *bufio.Scanner) (answer int) {
@@ -20,9 +20,7 @@ func part1(scanner *bufio.Scanner) (answer int) {
 			d, _ := strconv.Atoi(c)
 			digits = append(digits, d)
 		}
-		idx, d1 := getHighestDigit(digits[:len(digits)-1])
-		_, d2 := getHighestDigit(digits[idx+1:])
-		answer += (d1 * 10) + d2
+		answer += maxJoltage(digits, 2)
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
@@ -31,11 +29,33 @@ func part1(scanner *bufio.Scanner) (answer int) {
 	return answer
 }
 
-func getHighestDigit(digits []int) (idx int, digit int) {
-	for i, d := range digits {
-		if d > digit {
-			digit, idx = d, i
+func part2(scanner *bufio.Scanner) (answer int) {
+	for scanner.Scan() {
+		var digits []int
+		for _, c := range strings.Split(scanner.Text(), "") {
+			d, _ := strconv.Atoi(c)
+			digits = append(digits, d)
 		}
+		answer += maxJoltage(digits, 12)
 	}
-	return idx, digit
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return answer
+}
+
+func maxJoltage(digits []int, n int) (total int) {
+	start := 0
+	for remaining := n; remaining > 0; remaining-- {
+		best := start
+		for i := start; i <= len(digits)-remaining; i++ {
+			if digits[i] > digits[best] {
+				best = i
+			}
+		}
+		total = total*10 + digits[best]
+		start = best + 1
+	}
+	return total
 }
